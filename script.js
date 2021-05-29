@@ -1,10 +1,21 @@
-var money;
-var income;
-var addExpenses;
-var deposit;
-var mission;
-var period;
+var money = 70000;
+var income = 'фриланс';
+var addExpenses = 'Интернет, Коммуналка';
+var deposit = true;
+var mission = 200000;
+var period = 5;
 
-alert('Изучаю git');
+console.log(money);
+console.log(income);
+console.log(deposit);
 
-console.log('Все еще изучаю git');
+console.log(addExpenses.length);
+
+console.log('Период равен ' + period + ' месяцев');
+console.log('Цель заработать ' + mission + ' рублей');
+
+console.log(addExpenses.toLowerCase());
+console.log(addExpenses.split(', '));
+
+var budgetDay;
+console.log(money / 30);
