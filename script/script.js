@@ -47,5 +47,75 @@ window.addEventListener('DOMContentLoaded', function () {
 
     countTimer('22 june 2021');
 
+
+    //меню
+    const toggleMenu = () => {
+
+        const btnMenu = document.querySelector('.menu');
+        const menu = document.querySelector('menu');
+        const closeBtn = document.querySelector('.close-btn');
+        const menuItems = menu.querySelectorAll('ul>li');
+
+        const handlerMenu = () => {
+            menu.classList.toggle('active-menu');
+        };
+
+        btnMenu.addEventListener('click', handlerMenu);
+        closeBtn.addEventListener('click', handlerMenu);
+        menuItems.forEach((elem) => elem.addEventListener('click', handlerMenu));
+
+
+    };
+
+    toggleMenu();
+
+    //popup
+
+    const togglePopup = () => {
+        const popup = document.querySelector('.popup');
+        const popupBtn = document.querySelectorAll('.popup-btn');
+        const popupClose = document.querySelector('.popup-close');
+
+        popupBtn.forEach((elem) => {
+            elem.addEventListener('click', () => {
+                popup.style.display = `block`;
+            });
+        });
+
+        //animation popup
+        popupClose.addEventListener('click', () => {
+            popup.style.display = `none`;
+        });
+
+        let popupContent = document.querySelector('.popup-content');
+        let width = document.documentElement.clientWidth;
+        let count = 0;
+        let animateInterval;
+
+        const popupOpen = () => {
+
+            if (width <= 768) {
+                popup.style.display = `none`;
+                cancelAnimationFrame(animateInterval);
+            } else {
+                popup.style.display = `block`;
+                animateInterval = requestAnimationFrame(popupOpen);
+                count++;
+                if (count < 450) {
+                    popupContent.style.left = count + 'px';
+                }
+                else {
+                    cancelAnimationFrame(animateInterval);
+                }
+            }
+        };
+
+        animateInterval = requestAnimationFrame(popupOpen);
+
+    };
+
+    togglePopup();
+
+
 });
 
