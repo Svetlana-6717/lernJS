@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 clearInterval(idInterval);
             }
         }
-        updateClock();
+        // updateClock();
     }
 
     countTimer('23 june 2021');
@@ -241,7 +241,139 @@ window.addEventListener('DOMContentLoaded', function () {
 
     };
 
-    slider();
+    // slider();
+
+    //блок Наша команда
+    //смена фотографий через data атрибут
+
+    const image = document.querySelectorAll('.command__photo');
+    const command = document.querySelector('.command .row');
+
+    command.addEventListener('mouseover', (event) => {
+        let target = event.target;
+
+        image.forEach((elem, i) => {
+
+            if (elem === target) {
+                let src = image[i].getAttribute('src');
+                let dataSrc = document.createAttribute('data-src');
+                dataSrc.value = src;
+                image[i].setAttributeNode(dataSrc);
+                target.src = target.dataset.img;
+                image[i].removeAttribute('data-img');
+            }
+        });
+    });
+
+    command.addEventListener('mouseout', (event) => {
+        let target = event.target;
+
+        image.forEach((elem, i) => {
+            if (elem === target) {
+                let src = image[i].getAttribute('src');
+                let dataImg = document.createAttribute('data-img');
+                dataImg.value = src;
+                image[i].setAttributeNode(dataImg);
+                target.src = target.dataset.src;
+                image[i].removeAttribute('data-src');
+            }
+        });
+    });
+
+    //валидация форм
+
+    const calcSquare = document.querySelector('.calc-square');
+    const calcCount = document.querySelector('.calc-count');
+    const calcDay = document.querySelector('.calc-day');
+
+    calcSquare.addEventListener('input', () => {
+        calcSquare.value = calcSquare.value.replace(/\D/, '');
+    });
+
+    calcCount.addEventListener('input', () => {
+        calcCount.value = calcCount.value.replace(/\D/, '');
+    });
+
+    calcDay.addEventListener('input', () => {
+        calcDay.value = calcDay.value.replace(/\D/, '');
+    });
+
+
+    let inputName = document.querySelectorAll('input[name = user_name]');
+    let inputMessage = document.querySelector('input[name = user_message]');
+    let inputEmail = document.querySelectorAll('input[name = user_email]');
+    let inputPhone = document.querySelectorAll('input[name = user_phone]');
+
+    let regName = /[А-Яа-яЁё -]/g;
+    let regMessage = /[А-Яа-яЁё -]/g;
+    let regEmail = /[A-Za-z-!~'_]+@[a-z-_]+\.+[a-z]{2,4}/g;
+    let regPhone = /\+?[78]([-()]*\d){10}/g;
+
+
+    let validate = (elem) => {
+
+        if (elem.name === 'user_name') {
+
+            if (!regName.test(elem.value)) {
+                alert('Недопустимые символы в поле имя');
+                elem.value = '';
+            }
+            else {
+                elem.value = elem.value.match(regName).join('').replace(/^[- \s]+|[- \s]+$/g, '');
+                elem.value = elem.value.replace(/\s+/g, ' ');
+                elem.value = elem.value.replace(/( |^)[а-яё]/g, (item) => item.toUpperCase());
+            }
+
+        }
+
+        if (elem.name === 'user_email') {
+            if (!regEmail.test(elem.value)) {
+                alert('Неверный формат e-mail');
+                elem.value = '';
+            } else {
+                elem.value = elem.value.match(regEmail).join('');
+            }
+        }
+
+        if (elem.name === 'user_phone') {
+            if (!regPhone.test(elem.value)) {
+                alert('Такой номер телефона не существует');
+                elem.value = '';
+            } else {
+                elem.value = elem.value.match(regPhone).join('');
+            }
+        }
+    };
+
+
+    inputName.forEach((elem) => {
+        elem.addEventListener('blur', () => {
+            validate(elem);
+        });
+    });
+
+    inputEmail.forEach((elem) => {
+        elem.addEventListener('blur', () => {
+            validate(elem);
+        });
+    });
+
+    inputPhone.forEach((elem) => {
+        elem.addEventListener('blur', () => {
+            validate(elem);
+        });
+    });
+
+    inputMessage.addEventListener('blur', () => {
+        if (!regMessage.test(inputMessage.value)) {
+            alert('Недопустимые символы в поле сообщение');
+            inputMessage.value = '';
+        } else {
+            inputMessage.value = inputMessage.value.match(regMessage).join('').replace(/^[- \s]+|[- \s]+$/g, '');
+            inputMessage.value = inputMessage.value.replace(/\s+/g, ' ');
+            inputMessage.value = inputMessage.value.replace(/-{2,}/g, '-');
+        }
+    });
 
 });
 
