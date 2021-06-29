@@ -158,6 +158,7 @@ window.addEventListener('DOMContentLoaded', function () {
         };
 
         //добавление точек, равное количеству слайдов
+
         for (let i = 0; i < slide.length; i++) {
             let li = document.createElement('li');
             li.classList.add('dot');
@@ -299,52 +300,64 @@ window.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    let inputName = document.querySelectorAll('input[name = user_name]');
-    let inputMessage = document.querySelector('input[name = user_message]');
-    let inputEmail = document.querySelectorAll('input[name = user_email]');
-    let inputPhone = document.querySelectorAll('input[name = user_phone]');
+    const inputName = document.querySelectorAll('input[name = user_name]');
+    const inputMessage = document.querySelector('input[name = user_message]');
+    const inputEmail = document.querySelectorAll('input[name = user_email]');
+    const inputPhone = document.querySelectorAll('input[name = user_phone]');
 
-    let regName = /[А-Яа-яЁё -]/g;
-    let regMessage = /[А-Яа-яЁё -]/g;
-    let regEmail = /[A-Za-z-!~'_]+@[a-z-_]+\.+[a-z]{2,4}/g;
-    let regPhone = /\+?[78]([-()]*\d){10}/g;
+    let regName = /[А-Яа-яЁё ]/g;
+    let regMessage = /[А-Яа-яЁё0-9 -\W]/g;
+    let regEmail = /[A-Z-!~'_]+@[A-Z-_]+.+.[A-Z]{2,4}/ig;
+    let regPhone = /\+?[78]\d{10}/g;
 
+    let errorText = document.createElement('div');
+    errorText.style.cssText = 'font-size: 12px; color: red';
 
-    let validate = (elem) => {
+    const validate = (elem) => {
 
         if (elem.name === 'user_name') {
 
-            if (!regName.test(elem.value)) {
-                alert('Недопустимые символы в поле имя');
+            if (!regName.test(elem.value) || elem.value === '') {
+                elem.parentNode.append(errorText);
+                elem.style.border = 'solid red';
+                errorText.textContent = 'Недопустимые символы';
                 elem.value = '';
             }
             else {
-                elem.value = elem.value.match(regName).join('').replace(/^[- \s]+|[- \s]+$/g, '');
+                elem.value = elem.value.match(regName).join('').replace(/^[ \s]+|[ \s]+$/g, '');
                 elem.value = elem.value.replace(/\s+/g, ' ');
                 elem.value = elem.value.replace(/( |^)[а-яё]/g, (item) => item.toUpperCase());
+                elem.style.border = 'none';
+                errorText.textContent = '';
             }
-
         }
 
         if (elem.name === 'user_email') {
             if (!regEmail.test(elem.value)) {
-                alert('Неверный формат e-mail');
+                elem.parentNode.append(errorText);
+                elem.style.border = 'solid red';
+                errorText.textContent = 'Неверный формат e-mail';
                 elem.value = '';
             } else {
                 elem.value = elem.value.match(regEmail).join('');
+                elem.style.border = 'none';
+                errorText.textContent = '';
             }
         }
 
         if (elem.name === 'user_phone') {
             if (!regPhone.test(elem.value)) {
-                alert('Такой номер телефона не существует');
+                elem.parentNode.append(errorText);
+                elem.style.border = 'solid red';
+                errorText.textContent = 'Недопустимые символы';
                 elem.value = '';
             } else {
                 elem.value = elem.value.match(regPhone).join('');
+                elem.style.border = 'none';
+                errorText.textContent = '';
             }
         }
     };
-
 
     inputName.forEach((elem) => {
         elem.addEventListener('blur', () => {
@@ -366,12 +379,16 @@ window.addEventListener('DOMContentLoaded', function () {
 
     inputMessage.addEventListener('blur', () => {
         if (!regMessage.test(inputMessage.value)) {
-            alert('Недопустимые символы в поле сообщение');
+            inputMessage.parentNode.append(errorText);
+            inputMessage.style.border = 'solid red';
+            errorText.textContent = 'Недопустимые символы';
             inputMessage.value = '';
         } else {
             inputMessage.value = inputMessage.value.match(regMessage).join('').replace(/^[- \s]+|[- \s]+$/g, '');
             inputMessage.value = inputMessage.value.replace(/\s+/g, ' ');
             inputMessage.value = inputMessage.value.replace(/-{2,}/g, '-');
+            inputMessage.style.border = 'none';
+            errorText.textContent = '';
         }
     });
 
@@ -421,6 +438,118 @@ window.addEventListener('DOMContentLoaded', function () {
     };
 
     calc(100);
+
+    //send-ajax-form
+
+    const sendForm = () => {
+        const errorMessage = 'Что то пошло не так...';
+        const loadMessage = 'Загрузка...';
+        const successMessage = 'Спасибо! Мы скоро с вами свяжемся';
+
+        const form = document.getElementById('form1');
+        const inputForm = form.querySelectorAll('#form1 input');
+        const formFooter = document.getElementById('form2');
+        const inputFooter = formFooter.querySelectorAll('#form2 input');
+        const formPopup = document.getElementById('form3');
+        const inputPopup = formPopup.querySelectorAll('.popup-content input');
+
+
+        const statusMessage = document.createElement('div');
+        statusMessage.style.cssText = 'font-size: 2rem; color: white';
+
+        const postData = (body, outputData, errorData) => {
+            const request = new XMLHttpRequest();
+            request.addEventListener('readystatechange', () => {
+
+                if (request.readyState !== 4) {
+                    return;
+                }
+                if (request.status === 200) {
+                    outputData();
+                } else {
+                    errorData(request.status);
+                }
+            });
+
+            request.open('POST', './server.php');
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(JSON.stringify(body));
+        };
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            form.appendChild(statusMessage);
+            statusMessage.textContent = loadMessage;
+            const formData = new FormData(form);
+            let body = {};
+
+            formData.forEach((val, key) => {
+                body[key] = val;
+            });
+            postData(body, () => {
+                statusMessage.textContent = successMessage;
+
+            }, (error) => {
+                statusMessage.textContent = errorMessage;
+            });
+
+            inputForm.forEach((elem) => {
+                if (event.target) {
+                    elem.value = '';
+                }
+            });
+
+        });
+
+        formFooter.addEventListener('submit', (event) => {
+            event.preventDefault();
+            formFooter.appendChild(statusMessage);
+            statusMessage.textContent = loadMessage;
+            const formData = new FormData(formFooter);
+            let body = {};
+
+            formData.forEach((val, key) => {
+                body[key] = val;
+            });
+            postData(body, () => {
+                statusMessage.textContent = successMessage;
+            }, (error) => {
+                statusMessage.textContent = errorMessage;
+            });
+
+            inputFooter.forEach((elem) => {
+                if (event.target) {
+                    elem.value = '';
+                }
+            });
+
+        });
+
+        formPopup.addEventListener('submit', (event) => {
+            event.preventDefault();
+            formPopup.appendChild(statusMessage);
+            statusMessage.textContent = loadMessage;
+            const formData = new FormData(formPopup);
+            let body = {};
+
+            formData.forEach((val, key) => {
+                body[key] = val;
+            });
+            postData(body, () => {
+                statusMessage.textContent = successMessage;
+            }, (error) => {
+                statusMessage.textContent = errorMessage;
+            });
+
+            inputPopup.forEach((elem) => {
+                if (event.target) {
+                    elem.value = '';
+                }
+            });
+        });
+    };
+
+    sendForm();
 
 });
 
