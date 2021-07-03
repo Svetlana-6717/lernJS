@@ -26,7 +26,11 @@ const calc = () => {
     }
 
     if (typeValue && squareValue) {
-      total = price * typeValue * squareValue * countValue * dayValue;
+      total = Math.floor(price * typeValue * squareValue * countValue * dayValue);
+    } else {
+      calcCount.value = '';
+      calcDay.value = '';
+      calcSquare.value = '';
     }
 
     totalValue.textContent = total;

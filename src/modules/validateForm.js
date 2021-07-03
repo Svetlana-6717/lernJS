@@ -4,16 +4,19 @@
 
 const validateForm = () => {
   const inputName = document.querySelectorAll('input[name = user_name]');
-  const inputMessage = document.querySelector('input[name = user_message]');
   const inputEmail = document.querySelectorAll('input[name = user_email]');
   const inputPhone = document.querySelectorAll('input[name = user_phone]');
 
-  let regName = /[А-Яа-яЁё ]/g;
+  const inputMessage = document.querySelector('input[name = user_message]');
+  inputMessage.setAttribute('required', true);
+
+  let regName = /[а-яё ]/g;
   let regMessage = /[А-Яа-яЁё0-9 -\W]/g;
   let regEmail = /[A-Z-!~'_]+@[A-Z-_]+.+.[A-Z]{2,4}/ig;
-  let regPhone = /\+?[78]\d{10}/g;
+  let regPhone = /^(\+?[78]\d{10})$/g;
 
   let errorText = document.createElement('div');
+  errorText.classList.add('error');
   errorText.style.cssText = 'font-size: 12px; color: red';
 
   const validate = (elem) => {
@@ -69,6 +72,7 @@ const validateForm = () => {
   });
 
   inputEmail.forEach((elem) => {
+    elem.setAttribute('required', true);
     elem.addEventListener('blur', () => {
       validate(elem);
     });
@@ -81,7 +85,7 @@ const validateForm = () => {
   });
 
   inputMessage.addEventListener('blur', () => {
-    if (!regMessage.test(inputMessage.value)) {
+    if (!regMessage.test(inputMessage.value) || inputMessage.value === '') {
       inputMessage.parentNode.append(errorText);
       inputMessage.style.border = 'solid red';
       errorText.textContent = 'Недопустимые символы';
