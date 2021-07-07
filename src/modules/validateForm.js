@@ -10,10 +10,10 @@ const validateForm = () => {
   const inputMessage = document.querySelector('input[name = user_message]');
   inputMessage.setAttribute('required', true);
 
-  let regName = /[а-яё ]/g;
+  let regName = /[А-Яа-яЁё ]+/;
   let regMessage = /[А-Яа-яЁё0-9 -\W]/g;
   let regEmail = /[A-Z-!~'_]+@[A-Z-_]+.+.[A-Z]{2,4}/ig;
-  let regPhone = /^(\+?[78]\d{10})$/g;
+  let regPhone = /\+?[78]\d{10}/;
 
   let errorText = document.createElement('div');
   errorText.classList.add('error');
@@ -30,8 +30,8 @@ const validateForm = () => {
         elem.value = '';
       }
       else {
-        elem.value = elem.value.match(regName).join('').replace(/^[ \s]+|[ \s]+$/g, '');
-        elem.value = elem.value.replace(/\s+/g, ' ');
+        elem.value = elem.value.match(regName);
+        elem.value = elem.value.trim();
         elem.value = elem.value.replace(/( |^)[а-яё]/g, (item) => item.toUpperCase());
         elem.style.border = 'none';
         errorText.textContent = '';
@@ -45,7 +45,7 @@ const validateForm = () => {
         errorText.textContent = 'Неверный формат e-mail';
         elem.value = '';
       } else {
-        elem.value = elem.value.match(regEmail).join('');
+        elem.value = elem.value.match(regEmail);
         elem.style.border = 'none';
         errorText.textContent = '';
       }
@@ -58,7 +58,7 @@ const validateForm = () => {
         errorText.textContent = 'Недопустимые символы';
         elem.value = '';
       } else {
-        elem.value = elem.value.match(regPhone).join('');
+        elem.value = elem.value.match(regPhone);
         elem.style.border = 'none';
         errorText.textContent = '';
       }

@@ -25,7 +25,7 @@ const countTimer = (deadline) => {
 
   const updateClock = () => {
     const timer = getTimerRemaining();
-    const idInterval = setInterval(updateClock, 1000);
+    requestAnimationFrame(updateClock);
 
     timerHours.textContent = addZero(timer.hours);
     timerMinutes.textContent = addZero(timer.minutes);
@@ -36,10 +36,10 @@ const countTimer = (deadline) => {
       timerMinutes.textContent = '00';
       timerSeconds.textContent = '00';
 
-      clearInterval(idInterval);
+      cancelAnimationFrame(updateClock);
     }
   };
-  updateClock();
+  requestAnimationFrame(updateClock);
 };
 
 export default countTimer;

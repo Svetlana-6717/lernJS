@@ -24,7 +24,7 @@ const slider = () => {
     dotList.append(li);
   }
   const dot = document.querySelectorAll('.dot');
-
+  dot[currentSlide].classList.add('dot-active');
 
   const autoPlaySlide = () => {
 
@@ -38,7 +38,7 @@ const slider = () => {
     nextSlide(dot, currentSlide, 'dot-active');
   };
 
-  const startSlide = (time = 3000) => {
+  const startSlide = (time = 1500) => {
     interval = setInterval(autoPlaySlide, time);
   };
 
